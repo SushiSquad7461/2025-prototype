@@ -10,6 +10,7 @@ import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
@@ -86,6 +87,7 @@ public class Swerve extends VisionBaseSwerve {
         }
 
         super.drive(translation, rotation, color);
+        SmartDashboard.putNumber("rotation", rotation);
     }
 
     @Override

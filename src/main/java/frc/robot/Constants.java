@@ -50,34 +50,34 @@ public final class Constants {
     public static final MotorConfig ANGLE_CONFIG = new MotorConfig(
         20, // Current limit
         false,
-        PIDConfig.getPid(0.03), // P value for position control
+        PIDConfig.getPid(0.05), // P value for position control
         MotorConfig.Mode.COAST
     );
 
     public static final MotorConfig ANGLE_FLIPPED_CONFIG = new MotorConfig(
         20,
         true,
-        PIDConfig.getPid(0.03),
+        PIDConfig.getPid(0.05),
         MotorConfig.Mode.COAST
     );
 
     public static final MotorConfig DRIVE_CONFIG = new MotorConfig(
         40,
         true,
-        PIDConfig.getPid(0.01, 0.05), // P and F values for velocity control
+        PIDConfig.getPid(0.002, 0), // P and F values for velocity                                                                                             
         MotorConfig.Mode.BRAKE
     );
 
     public static final MotorConfig DRIVE_FLIPPED_CONFIG = new MotorConfig(
         40,
         false,
-        PIDConfig.getPid(0.01, 0.05),
+        PIDConfig.getPid(0.002, 0),
         MotorConfig.Mode.BRAKE
     );
 
     public static final PIDConfig autoRotate = PIDConfig.getPid(0.008, 0.00, 0.00);
     public static final SDSModules MODULE_TYPE = SDSModules.MK4i;
-    public static final boolean SWERVE_TUNING_MODE = false;
+    public static final boolean SWERVE_TUNING_MODE = true;
 
     public static final SwerveModuleConstants[] SWERVE_MODULE_CONSTANTS = new SwerveModuleConstants[] {
       new SwerveModuleConstants(0, Rotation2d.fromDegrees(0.461182 * 360), MODULE_TYPE,
