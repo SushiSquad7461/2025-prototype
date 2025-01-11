@@ -4,25 +4,13 @@
 
 package frc.robot.subsystems;
 
-import java.util.List;
-
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 import SushiFrcLib.Sensors.gyro.Pigeon;
-import SushiFrcLib.SmartDashboard.TunableNumber;
-import SushiFrcLib.Swerve.SwerveModules.*;
+import SushiFrcLib.Swerve.SwerveModules.SwerveModuleNeo;
 import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
-
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.Constants;
 
 public class Swerve extends VisionBaseSwerve {
@@ -51,7 +39,7 @@ public class Swerve extends VisionBaseSwerve {
             new SwerveModuleNeo(Constants.Swerve.SWERVE_MODULE_CONSTANTS[2]),
             new SwerveModuleNeo(Constants.Swerve.SWERVE_MODULE_CONSTANTS[3]),
           },
-          new Pigeon(Constants.Ports.PIGEON_ID, Constants.Swerve.GYRO_INVERSION, Constants.Ports.CANIVORE_NAME),
+          new Pigeon(Constants.Ports.PIGEON_ID, Constants.Swerve.GYRO_INVERSION),
           Constants.Swerve.SWERVE_KINEMATICS);
 
         locationLock = false;

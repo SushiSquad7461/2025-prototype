@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import SushiFrcLib.Swerve.SwerveConstants.SwerveModuleConstants;
 import SushiFrcLib.Control.PIDConfig;
 import SushiFrcLib.Motor.MotorConfig;
@@ -14,9 +11,7 @@ import SushiFrcLib.Swerve.SwerveConstants.SDSModules;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -55,28 +50,28 @@ public final class Constants {
     public static final MotorConfig ANGLE_CONFIG = new MotorConfig(
         20, // Current limit
         false,
-        PIDConfig.getPid(0.3), // P value for position control
+        PIDConfig.getPid(0.03), // P value for position control
         MotorConfig.Mode.COAST
     );
 
     public static final MotorConfig ANGLE_FLIPPED_CONFIG = new MotorConfig(
         20,
         true,
-        PIDConfig.getPid(0.3),
+        PIDConfig.getPid(0.03),
         MotorConfig.Mode.COAST
     );
 
     public static final MotorConfig DRIVE_CONFIG = new MotorConfig(
         40,
         true,
-        PIDConfig.getPid(0.1, 0.5), // P and F values for velocity control
+        PIDConfig.getPid(0.01, 0.05), // P and F values for velocity control
         MotorConfig.Mode.BRAKE
     );
 
     public static final MotorConfig DRIVE_FLIPPED_CONFIG = new MotorConfig(
         40,
         false,
-        PIDConfig.getPid(0.1, 0.5),
+        PIDConfig.getPid(0.01, 0.05),
         MotorConfig.Mode.BRAKE
     );
 
