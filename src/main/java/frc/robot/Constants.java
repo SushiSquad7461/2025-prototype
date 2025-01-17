@@ -50,7 +50,7 @@ public final class Constants {
     public static final MotorConfig ANGLE_CONFIG = new MotorConfig(
         20, // Current limit
         false,
-        PIDConfig.getPid(0.05), // P value for position control
+        PIDConfig.getPid(0.03), // P value for position control
         MotorConfig.Mode.COAST
     );
 
@@ -64,14 +64,14 @@ public final class Constants {
     public static final MotorConfig DRIVE_CONFIG = new MotorConfig(
         40,
         true,
-        PIDConfig.getPid(0.2, 0), // P and F values for velocity                                                                                             
+        PIDConfig.getPid(0.05, 0, 0.005, 0.0), // P and F values for velocity                                                                                             
         MotorConfig.Mode.BRAKE
     );
 
     public static final MotorConfig DRIVE_FLIPPED_CONFIG = new MotorConfig(
         40,
         false,
-        PIDConfig.getPid(0.2, 0),
+        PIDConfig.getPid(0.05, 0),
         MotorConfig.Mode.BRAKE
     );
 
