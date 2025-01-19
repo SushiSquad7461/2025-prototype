@@ -40,10 +40,10 @@ public final class Constants {
     public static final double DRIVE_BASE_RADIUS = Math.sqrt(TRACK_WIDTH * TRACK_WIDTH + WHEEL_BASE * WHEEL_BASE) / 2;
 
     public static final SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
-        new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
-        new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
-        new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
-        new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0)
+        new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0), //1
+        new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //0
+        new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //2
+        new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0) //3
     );
 
     // Updated PID values for NEO motors - these will need tuning
@@ -81,13 +81,13 @@ public final class Constants {
 
     public static final SwerveModuleConstants[] SWERVE_MODULE_CONSTANTS = new SwerveModuleConstants[] {
       new SwerveModuleConstants(0, Rotation2d.fromDegrees(310.078125), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(1, Rotation2d.fromDegrees(240.820312), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(2, Rotation2d.fromDegrees(298.388672), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(3, Rotation2d.fromDegrees(162.421875), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_CONFIG)
+          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG)
     };
   }
 
