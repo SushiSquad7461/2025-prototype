@@ -39,11 +39,12 @@ public final class Constants {
     public static final double WHEEL_BASE = Units.inchesToMeters(23);
     public static final double DRIVE_BASE_RADIUS = Math.sqrt(TRACK_WIDTH * TRACK_WIDTH + WHEEL_BASE * WHEEL_BASE) / 2;
 
+    // these need to be in module order
     public static final SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
-        new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0), //1
-        new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //0
-        new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //2
-        new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0) //3
+      new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //0
+      new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0), //1
+      new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0), //2
+      new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0) //3
     );
 
     // Updated PID values for NEO motors - these will need tuning

@@ -54,7 +54,7 @@ public class RobotContainer {
     () -> m_driverController.getLeftX(),
     () -> m_driverController.getRightX()));
 
-    m_driverController.y().onTrue(swerve.zeroGyro());
+    m_driverController.y().onTrue(swerve.resetHeading());
   }
 
   /**

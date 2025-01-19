@@ -8,6 +8,7 @@ import SushiFrcLib.Sensors.gyro.Pigeon;
 import SushiFrcLib.Swerve.SwerveModules.SwerveModuleNeo;
 import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,7 +36,7 @@ public class Swerve extends VisionBaseSwerve {
 
     private Swerve() {
         super(
-          new SwerveModuleNeo[] {
+          new SwerveModuleNeo[] { // pass these in same order as they are enumerated in the kinematics in the constants
             new SwerveModuleNeo(Constants.Swerve.SWERVE_MODULE_CONSTANTS[0]),
             new SwerveModuleNeo(Constants.Swerve.SWERVE_MODULE_CONSTANTS[1]),
             new SwerveModuleNeo(Constants.Swerve.SWERVE_MODULE_CONSTANTS[2]),
@@ -90,6 +91,15 @@ public class Swerve extends VisionBaseSwerve {
 
         super.drive(translation, rotation, color);
         SmartDashboard.putNumber("rotation", rotation);
+    }
+
+    public Command resetHeading() {
+        return runOnce(() -> setOdomPose(
+            new Pose2d(
+                getOdomPose().getTranslation(), 
+                new Rotation2d()
+            )
+        ));
     }
 
     @Override
