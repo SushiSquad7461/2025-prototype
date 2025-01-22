@@ -82,13 +82,13 @@ public final class Constants {
 
     public static final SwerveModuleConstants[] SWERVE_MODULE_CONSTANTS = new SwerveModuleConstants[] {
       new SwerveModuleConstants(0, Rotation2d.fromDegrees(310.078125), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(1, Rotation2d.fromDegrees(240.820312), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(2, Rotation2d.fromDegrees(298.388672), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG),
+          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_FLIPPED_CONFIG),
       new SwerveModuleConstants(3, Rotation2d.fromDegrees(162.421875), MODULE_TYPE,
-          SWERVE_TUNING_MODE, DRIVE_CONFIG, ANGLE_FLIPPED_CONFIG)
+          SWERVE_TUNING_MODE, DRIVE_FLIPPED_CONFIG, ANGLE_FLIPPED_CONFIG)
     };
   }
 

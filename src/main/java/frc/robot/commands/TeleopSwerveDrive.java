@@ -65,8 +65,7 @@ public class TeleopSwerveDrive extends Command {
 
         swerve.drive(
             (new Translation2d(ControllerMath.cube(translation.getNorm()), translation.getAngle())),
-            ControllerMath.cube(rot),
-            AllianceService.getAlliance()
+            ControllerMath.cube(rot)
         );
     }
 }

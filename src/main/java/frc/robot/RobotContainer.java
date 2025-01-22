@@ -51,9 +51,9 @@ public class RobotContainer {
     swerve.setDefaultCommand(new TeleopSwerveDrive(
     swerve,
     // thumbstick is down +, right +; we want up +, left +
-    () -> -m_driverController.getLeftY(),
     () -> -m_driverController.getLeftX(),
-    () -> m_driverController.getRightX()));
+    () -> -m_driverController.getLeftY(),
+    () -> -m_driverController.getRightX()));
 
     m_driverController.y().onTrue(swerve.resetHeading());
   }

@@ -84,12 +84,12 @@ public class Swerve extends VisionBaseSwerve {
     }
 
     @Override
-    public void drive(Translation2d translation, double rotation, Alliance color) {
+    public void drive(Translation2d translation, double rotation) {
         if (locationLock) {
             rotation = rotationLockPID.calculate(getGyro().getAngle().getDegrees());
         }
 
-        super.drive(translation, rotation, color);
+        super.drive(translation, rotation);
         SmartDashboard.putNumber("rotation", rotation);
     }
 
