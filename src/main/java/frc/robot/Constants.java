@@ -33,6 +33,9 @@ public final class Constants {
 
   public static final class Swerve {
     public static final boolean GYRO_INVERSION = false;
+    public static final boolean REDUCE_SPEED = true;
+    public static final double LOW_SPEED = 2;
+    public static final double LOW_ROT = Math.PI;
 
     /* Drivetrain Constants */
     public static final double TRACK_WIDTH = Units.inchesToMeters(23);
