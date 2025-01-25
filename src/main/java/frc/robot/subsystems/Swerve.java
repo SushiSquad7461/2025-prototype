@@ -4,12 +4,23 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import SushiFrcLib.Sensors.gyro.Pigeon;
+import SushiFrcLib.SmartDashboard.TunableNumber;
 import SushiFrcLib.Swerve.SwerveModules.SwerveModuleNeo;
 import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,9 +32,9 @@ public class Swerve extends VisionBaseSwerve {
     private boolean locationLock;
     private PIDController rotationLockPID;
 
-    // private final PhotonCamera camera;
-    // private final PhotonPoseEstimator camFilter;
-    // private final TunableNumber maxDistanceCamToTarget;
+    private final PhotonCamera camera;
+    private final PhotonPoseEstimator camFilter;
+    private final TunableNumber maxDistanceCamToTarget;
 
     public static Swerve getInstance() {
         if (instance == null) {
@@ -48,13 +59,12 @@ public class Swerve extends VisionBaseSwerve {
         locationLock = false;
         rotationLockPID = Constants.Swerve.autoRotate.getPIDController();
 
-        // camera = new PhotonCamera("23");
-        // camFilter = new PhotonPoseEstimator(
-        //         AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-        //         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        //         camera,
-        //         new Transform3d());
-        // maxDistanceCamToTarget = new TunableNumber("Max Cam->Target (m)", 6, Constants.TUNING_MODE);
+        camera = new PhotonCamera("2025");
+        camFilter = new PhotonPoseEstimator(
+                AprilTagFields.k2025Reefscape.loadAprilTagLayoutField(),
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                new Transform3d());
+        maxDistanceCamToTarget = new TunableNumber("Max Cam->Target (m)", 6, true);
     }
 
     public void enableRotationLock(double angle) {
@@ -105,26 +115,30 @@ public class Swerve extends VisionBaseSwerve {
     public void periodic() {
         super.periodic();
 
-        // if (!camera.isConnected())
-        //     return;
+        if (!camera.isConnected())
+            return;
+        
+        List<PhotonPipelineResult> camResults = camera.getAllUnreadResults();
+        PhotonPipelineResult camPhotonPipelineResult = camResults.get(camResults.size()-1); //set idx to wanted target
+        
+        var pose = camFilter.update(camPhotonPipelineResult);
 
-        // var pose = camFilter.update();
+        if (!pose.isPresent() || pose.get().targetsUsed.size() < 2)
+            return;
 
-        // if (!pose.isPresent() || pose.get().targetsUsed.size() < 2)
-        //     return;
+        var targetsCloseEnough = true;
+        for (var target : pose.get().targetsUsed) {
+            var transform = target.getBestCameraToTarget();
+            double cameraToTagDistance = new Pose3d().transformBy(transform).getTranslation().getNorm();
+            if (cameraToTagDistance > maxDistanceCamToTarget.get()) {
+                targetsCloseEnough = false;
+                break;
+            }
+        }
 
-        // var targetsCloseEnough = true;
-        // for (var target : pose.get().targetsUsed) {
-        //     var transform = target.getBestCameraToTarget();
-        //     double cameraToTagDistance = new Pose3d().transformBy(transform).getTranslation().getNorm();
-        //     if (cameraToTagDistance > maxDistanceCamToTarget.get()) {
-        //         targetsCloseEnough = false;
-        //         break;
-        //     }
-        // }
-        // if (targetsCloseEnough) {
-        //     super.addVisionTargets(List.of(pose.get()));
-        // }
+        if (targetsCloseEnough) {
+            super.addVisionTargets(List.of(pose.get()));
+        }
 
     }
 }
