@@ -17,6 +17,7 @@ import SushiFrcLib.Swerve.SwerveModules.SwerveModuleNeo;
 import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -92,6 +93,7 @@ public class Swerve extends VisionBaseSwerve {
         locationLock = false;
     }
 
+
     @Override
     public void drive(Translation2d translation, double rotation) {
         if (locationLock) {
@@ -115,30 +117,6 @@ public class Swerve extends VisionBaseSwerve {
     public void periodic() {
         super.periodic();
 
-        if (!camera.isConnected())
-            return;
-        
-        List<PhotonPipelineResult> camResults = camera.getAllUnreadResults();
-        PhotonPipelineResult camPhotonPipelineResult = camResults.get(camResults.size()-1); //set idx to wanted target
-        
-        var pose = camFilter.update(camPhotonPipelineResult);
-
-        if (!pose.isPresent() || pose.get().targetsUsed.size() < 2)
-            return;
-
-        var targetsCloseEnough = true;
-        for (var target : pose.get().targetsUsed) {
-            var transform = target.getBestCameraToTarget();
-            double cameraToTagDistance = new Pose3d().transformBy(transform).getTranslation().getNorm();
-            if (cameraToTagDistance > maxDistanceCamToTarget.get()) {
-                targetsCloseEnough = false;
-                break;
-            }
-        }
-
-        if (targetsCloseEnough) {
-            super.addVisionTargets(List.of(pose.get()));
-        }
 
     }
 }
