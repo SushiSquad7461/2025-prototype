@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.List;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -17,14 +15,13 @@ import SushiFrcLib.Swerve.SwerveModules.SwerveModuleNeo;
 import SushiFrcLib.Swerve.SwerveTemplates.VisionBaseSwerve;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants;
 
 public class Swerve extends VisionBaseSwerve {
@@ -36,6 +33,10 @@ public class Swerve extends VisionBaseSwerve {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator camFilter;
     private final TunableNumber maxDistanceCamToTarget;
+
+    private final PIDController xController = new PIDController(0, 0, 0); //TODO: set these pid constants
+    private final PIDController yController = new PIDController(0, 0, 0);
+    private final PIDController rotationController = new PIDController(0, 0, 0);
 
     public static Swerve getInstance() {
         if (instance == null) {
@@ -113,10 +114,48 @@ public class Swerve extends VisionBaseSwerve {
         ));
     }
 
+    public Command getAutoAlignCommand() {
+        return new RunCommand(
+            () -> {
+                PhotonPipelineResult result = camera.getLatestResult();
+                
+                if (result.hasTargets()) {
+                    var bestTarget = result.getBestTarget();
+                    
+                    // target pose relative to the camera
+                    double x = bestTarget.getBestCameraToTarget().getX();
+                    double y = bestTarget.getBestCameraToTarget().getY();
+                    double yaw = bestTarget.getYaw();
+                    
+                    double xSpeed = xController.calculate(x, 0);
+                    double ySpeed = yController.calculate(y, 0);
+                    double rotationSpeed = rotationController.calculate(yaw, 0);
+                    
+                    // drive with the calculated speeds
+                    drive(
+                        new Translation2d(xSpeed, ySpeed),
+                        rotationSpeed
+                    );
+                }
+            }
+        ).until(this::isAligned);
+    }
+
+    private boolean isAligned() {
+        PhotonPipelineResult result = camera.getLatestResult();
+        if (!result.hasTargets()) return false;
+        
+        var target = result.getBestTarget();
+        Transform3d targetTransform = target.getBestCameraToTarget();
+        
+        return Math.abs(targetTransform.getX()) < 0.1 && // TODO: set X and Y bounds
+               Math.abs(targetTransform.getY()) < 0.1 &&
+               Math.abs(target.getYaw()) < 5.0;
+    }
+
     @Override
     public void periodic() {
         super.periodic();
-
 
     }
 }
