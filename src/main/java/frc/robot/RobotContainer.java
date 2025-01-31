@@ -54,7 +54,7 @@ public class RobotContainer {
     () -> -m_driverController.getRightX()));
 
     m_driverController.y().onTrue(swerve.resetHeading());
-    m_driverController.b().whileTrue(swerve.getAutoAlignCommand());
+    m_driverController.b().onTrue(swerve.getAutoAlignCommand());
   }
 
   /**

@@ -34,9 +34,9 @@ public class Swerve extends VisionBaseSwerve {
     private final PhotonPoseEstimator camFilter;
     private final TunableNumber maxDistanceCamToTarget;
 
-    private final PIDController xController = new PIDController(0, 0, 0); //TODO: set these pid constants
-    private final PIDController yController = new PIDController(0, 0, 0);
-    private final PIDController rotationController = new PIDController(0, 0, 0);
+    private final PIDController xController = new PIDController(0.1, 0, 0); //TODO: set these pid constants
+    private final PIDController yController = new PIDController(0.1, 0, 0);
+    private final PIDController rotationController = new PIDController(0.1, 0, 0);
 
     public static Swerve getInstance() {
         if (instance == null) {
@@ -61,7 +61,7 @@ public class Swerve extends VisionBaseSwerve {
         locationLock = false;
         rotationLockPID = Constants.Swerve.autoRotate.getPIDController();
 
-        camera = new PhotonCamera("2025");
+        camera = new PhotonCamera("Arducam");
         camFilter = new PhotonPoseEstimator(
                 AprilTagFields.k2025Reefscape.loadAprilTagLayoutField(),
                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -97,7 +97,7 @@ public class Swerve extends VisionBaseSwerve {
 
     @Override
     public void drive(Translation2d translation, double rotation) {
-        if (locationLock) {
+        if (locationLock && !isAligned()) { // Disable locationLock during autoAlign
             rotation = rotationLockPID.calculate(getGyro().getAngle().getDegrees());
         }
 
@@ -122,6 +122,7 @@ public class Swerve extends VisionBaseSwerve {
                 if (result.hasTargets()) {
                     var bestTarget = result.getBestTarget();
                     
+                    System.out.print("reached autoalign");
                     // target pose relative to the camera
                     double x = bestTarget.getBestCameraToTarget().getX();
                     double y = bestTarget.getBestCameraToTarget().getY();
@@ -138,7 +139,7 @@ public class Swerve extends VisionBaseSwerve {
                     );
                 }
             }
-        ).until(this::isAligned);
+        ).until(this::isAligned).withTimeout(5); 
     }
 
     private boolean isAligned() {
