@@ -36,6 +36,9 @@ public final class Constants {
     public static final boolean REDUCE_SPEED = true;
     public static final double LOW_SPEED = 2;
     public static final double LOW_ROT = Math.PI;
+    public static final int CAMERA_RESOLUTIONX = 1280;
+    public static final int CAMERA_RESOLUTIONY = 800;
+
 
     /* Drivetrain Constants */
     public static final double TRACK_WIDTH = Units.inchesToMeters(23);

@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.TargetCorner;
 
 import SushiFrcLib.Sensors.gyro.Pigeon;
 import SushiFrcLib.SmartDashboard.TunableNumber;
@@ -61,7 +64,7 @@ public class Swerve extends VisionBaseSwerve {
         locationLock = false;
         rotationLockPID = Constants.Swerve.autoRotate.getPIDController();
 
-        camera = new PhotonCamera("Arducam");
+        camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
         camFilter = new PhotonPoseEstimator(
                 AprilTagFields.k2025Reefscape.loadAprilTagLayoutField(),
                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -124,19 +127,37 @@ public class Swerve extends VisionBaseSwerve {
                     
                     System.out.print("reached autoalign");
                     // target pose relative to the camera
-                    double x = bestTarget.getBestCameraToTarget().getX();
-                    double y = bestTarget.getBestCameraToTarget().getY();
-                    double yaw = bestTarget.getYaw();
+                    List<TargetCorner> targets = bestTarget.getDetectedCorners();
+                    double centerX = 0;
+
+                    double idX = Constants.Swerve.CAMERA_RESOLUTIONX/2;
+                    for (var target : targets) {
+                        centerX += target.x;
+                    }
                     
-                    double xSpeed = xController.calculate(x, 0);
-                    double ySpeed = yController.calculate(y, 0);
-                    double rotationSpeed = rotationController.calculate(yaw, 0);
+                    centerX /= 4;
+
+                    if (centerX < idX - 100){
+                        drive(
+                            new Translation2d(0, 0.1),
+                            0
+                        );
+                    } else if (centerX > idX + 100){
+                        drive(
+                            new Translation2d(0, -0.1),
+                            0
+                        );
+                    }
+                    
+                    // double xSpeed = xController.calculate(x, 0);
+                    // double ySpeed = yController.calculate(y, 0);
+                    // double rotationSpeed = rotationController.calculate(yaw, 0);
                     
                     // drive with the calculated speeds
-                    drive(
-                        new Translation2d(xSpeed, ySpeed),
-                        rotationSpeed
-                    );
+                    // drive(
+                    //     new Translation2d(xSpeed, ySpeed),
+                    //     rotationSpeed
+                    // );
                 }
             }
         ).until(this::isAligned).withTimeout(5); 
