@@ -72,6 +72,18 @@ public class Swerve extends VisionBaseSwerve {
         maxDistanceCamToTarget = new TunableNumber("Max Cam->Target (m)", 6, true);
     }
 
+    public enum AlignmentPosition {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+    private AlignmentPosition currentAlignmentPosition = AlignmentPosition.CENTER;
+
+    //Constants for alignment positions in pixels
+    private static final double LEFT_OFFSET = -200; 
+    private static final double RIGHT_OFFSET = 200;
+    private static final double ALIGNMENT_TOLERANCE = 50; 
+
     public void enableRotationLock(double angle) {
         locationLock = true;
 
@@ -100,7 +112,7 @@ public class Swerve extends VisionBaseSwerve {
 
     @Override
     public void drive(Translation2d translation, double rotation) {
-        if (locationLock && !isAligned()) { // Disable locationLock during autoAlign
+        if (locationLock && !isAligned(currentAlignmentPosition)) { // Disable locationLock during autoAlign
             rotation = rotationLockPID.calculate(getGyro().getAngle().getDegrees());
         }
 
@@ -117,11 +129,20 @@ public class Swerve extends VisionBaseSwerve {
         ));
     }
 
-    public Command getAutoAlignCommand() {
+    private double getTargetX(AlignmentPosition position) {
+        double centerX = Constants.Swerve.CAMERA_RESOLUTIONX / 2;
+        return switch(position) {
+            case LEFT -> centerX + LEFT_OFFSET;
+            case RIGHT -> centerX + RIGHT_OFFSET;
+            case CENTER -> centerX;
+        };
+    }
+
+    public Command runAutoAlign(AlignmentPosition position) {
         return new RunCommand(
             () -> {
                 PhotonPipelineResult result = camera.getLatestResult();
-                
+                currentAlignmentPosition = position;
                 if (result.hasTargets()) {
                     var bestTarget = result.getBestTarget();
                     
@@ -130,19 +151,21 @@ public class Swerve extends VisionBaseSwerve {
                     List<TargetCorner> targets = bestTarget.getDetectedCorners();
                     double centerX = 0;
 
-                    double idX = Constants.Swerve.CAMERA_RESOLUTIONX/2;
+                    double idX = getTargetX(position);
                     for (var target : targets) {
                         centerX += target.x;
                     }
                     
-                    centerX /= 4;
+                    centerX /= targets.size();
+                    SmartDashboard.putNumber("Target Center X", centerX);
+                    SmartDashboard.putNumber("Desired X", idX);
 
-                    if (centerX < idX - 100){
+                    if (centerX < idX - ALIGNMENT_TOLERANCE){
                         drive(
                             new Translation2d(0, 0.1),
                             0
                         );
-                    } else if (centerX > idX + 100){
+                    } else if (centerX > idX + ALIGNMENT_TOLERANCE){
                         drive(
                             new Translation2d(0, -0.1),
                             0
@@ -160,24 +183,34 @@ public class Swerve extends VisionBaseSwerve {
                     // );
                 }
             }
-        ).until(this::isAligned).withTimeout(5); 
+        ).until(() -> isAligned(currentAlignmentPosition)).withTimeout(5);
     }
 
-    private boolean isAligned() {
+    private boolean isAligned(AlignmentPosition position) {
         PhotonPipelineResult result = camera.getLatestResult();
         if (!result.hasTargets()) return false;
         
-        var target = result.getBestTarget();
-        Transform3d targetTransform = target.getBestCameraToTarget();
+        var bestTarget = result.getBestTarget();
+        List<TargetCorner> corners = bestTarget.getDetectedCorners();
         
-        return Math.abs(targetTransform.getX()) < 0.1 && // TODO: set X and Y bounds
-               Math.abs(targetTransform.getY()) < 0.1 &&
-               Math.abs(target.getYaw()) < 5.0;
+        // Calculate center X of the target
+        double centerX = 0;
+        for (var corner : corners) {
+            centerX += corner.x;
+        }
+        centerX /= corners.size();
+        
+        // Get desired X position based on alignment position
+        double targetX = getTargetX(position);
+        
+        return Math.abs(centerX - targetX) < ALIGNMENT_TOLERANCE;
     }
 
     @Override
     public void periodic() {
         super.periodic();
+        SmartDashboard.putString("Current Alignment Position", currentAlignmentPosition.toString());
+        SmartDashboard.putBoolean("Is Aligned", isAligned(currentAlignmentPosition));
 
     }
 }

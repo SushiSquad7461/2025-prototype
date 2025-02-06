@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerveDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Swerve.AlignmentPosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -41,7 +42,8 @@ public class RobotContainer {
    * predicate, or via the named factories in {@link
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJ
+   * oystick Flight
    * joysticks}.
    */
   private void configureBindings() {
@@ -54,7 +56,9 @@ public class RobotContainer {
     () -> -m_driverController.getRightX()));
 
     m_driverController.y().onTrue(swerve.resetHeading());
-    m_driverController.b().onTrue(swerve.getAutoAlignCommand());
+    m_driverController.b().onTrue(swerve.runAutoAlign(AlignmentPosition.CENTER));
+    m_driverController.leftTrigger().onTrue(swerve.runAutoAlign(AlignmentPosition.LEFT));
+    m_driverController.rightTrigger().onTrue(swerve.runAutoAlign(AlignmentPosition.RIGHT));
   }
 
   /**
