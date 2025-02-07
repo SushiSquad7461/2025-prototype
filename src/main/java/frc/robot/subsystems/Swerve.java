@@ -80,8 +80,8 @@ public class Swerve extends VisionBaseSwerve {
     private AlignmentPosition currentAlignmentPosition = AlignmentPosition.CENTER;
 
     //Constants for alignment positions in pixels
-    private static final double LEFT_OFFSET = -200; 
-    private static final double RIGHT_OFFSET = 200;
+    private static final double LEFT_OFFSET = 300; 
+    private static final double RIGHT_OFFSET = -300;
     private static final double ALIGNMENT_TOLERANCE = 50; 
 
     public void enableRotationLock(double angle) {
@@ -160,27 +160,18 @@ public class Swerve extends VisionBaseSwerve {
                     SmartDashboard.putNumber("Target Center X", centerX);
                     SmartDashboard.putNumber("Desired X", idX);
 
+
                     if (centerX < idX - ALIGNMENT_TOLERANCE){
                         drive(
-                            new Translation2d(0, 0.1),
+                            new Translation2d(0, 0.2),
                             0
                         );
                     } else if (centerX > idX + ALIGNMENT_TOLERANCE){
                         drive(
-                            new Translation2d(0, -0.1),
+                            new Translation2d(0, -0.2),
                             0
                         );
                     }
-                    
-                    // double xSpeed = xController.calculate(x, 0);
-                    // double ySpeed = yController.calculate(y, 0);
-                    // double rotationSpeed = rotationController.calculate(yaw, 0);
-                    
-                    // drive with the calculated speeds
-                    // drive(
-                    //     new Translation2d(xSpeed, ySpeed),
-                    //     rotationSpeed
-                    // );
                 }
             }
         ).until(() -> isAligned(currentAlignmentPosition)).withTimeout(5);
